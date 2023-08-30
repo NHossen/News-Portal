@@ -1,30 +1,48 @@
 const handlecategory=async ()=>{
-    const resposnse=await fetch(`https://openapi.programming-hero.com/api/news/categories`
+  console.log("hello dear");
+    const res=await fetch(`https://openapi.programming-hero.com/api/news/categories`
     );
+    const data=await res.json();
+    console.log("111",data.data.news_category[1]);
 
-    const data=await resposnse.json();
 
-    console.log("111",data);
-    const tabContainer=document.getElementById('tab-container');
+    const tabContainer=document.getElementById('tab-container');//Inside this div put all data
 
-    const trimeData=data.data.news_category.slice(0,3);
-
-    trimeData.forEach((category) => {
+    //const trimeData=data.data.news_category.slice(0,3);
+    const getData=data.data.news_category.slice(0,3);
+    getData.forEach((category) => {
+      console.log("Search category name",category)
         const div =document.createElement("div");
-        div.innerHTML=`<a onclick="hadleLoadNews()" class="tab">${category.category_name}</a>
+        div.innerHTML=`
+        
+        <a onclick="hadleLoadNews('${category.category_id}')" class="tab">${category.category_name}</a>
         
         `;
         tabContainer.appendChild(div);
+
+        console.log("categort data id",category.category_id)
+
     });
-}
+
+}//Done
 
 
-const hadleLoadNews=async(category_id) =>{
-    const resposnse=await fetch(` https://openapi.programming-hero.com/api/news/category/${category_id}`);
-    const data=await resposnse.json();
+
+
+
+const hadleLoadNews=async(categoryId) =>{
+
+  console.log("CAtergory main idd",categoryId);
+  
+    const res=await fetch(`https://openapi.programming-hero.com/api/news/category/${categoryId}`);
+
+    const data=await res.json();
     console.log("55",data);
 
-    const cardContainer=document.getElementById("card-container")
+    const cardContainer=document.getElementById("card-container");
+    cardContainer.innerHTML="";
+
+
     data.data.forEach((news)=>{
         const div=document.createElement("div");
         div.innerHTML=`
@@ -32,10 +50,11 @@ const hadleLoadNews=async(category_id) =>{
                 <figure><img src="${news?.image_url}" alt="Shoes" /></figure>
                 <div class="card-body">
                   <h2 class="card-title">
-                    ${news.title}
-                    <div class="badge badge-secondary">NEW</div>
+                    ${news.title.slice(0,30)}
+                    <div class="badge badge-secondary">${news.rating.badge}</div>
                   </h2>
-                  <p>If a dog chews shoes whose shoes does he choose?</p>
+                  <p>${news.details.slice(0,80)}</p>
+                  <h2>${news.total_view ? news.total_view:"3000"}</h2>
                   <div class="card-actions justify-end">
                     <div class="badge badge-outline">Fashion</div> 
                     <div class="badge badge-outline">Products</div>
@@ -52,4 +71,4 @@ const hadleLoadNews=async(category_id) =>{
 }
 
 handlecategory();
-hadleLoadNews();
+hadleLoadNews('08');
